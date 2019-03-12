@@ -50,36 +50,36 @@ use Skeleton\Domain\Todo;
 
 $container = $app->getContainer();
 
-$container["commandBus"] = function ($container) {
+$container['commandBus'] = function ($container) {
     $inflector = new HandleInflector();
 
     $locator = new InMemoryLocator();
     $locator->addHandler(
-        new CreateTodoHandler($container["todoRepository"]),
+        new CreateTodoHandler($container['todoRepository']),
         CreateTodoCommand::class
     );
     $locator->addHandler(
-        new ReadTodoHandler($container["todoRepository"]),
+        new ReadTodoHandler($container['todoRepository']),
         ReadTodoQuery::class
     );
     $locator->addHandler(
-        new ReadTodoCollectionHandler($container["todoRepository"]),
+        new ReadTodoCollectionHandler($container['todoRepository']),
         ReadTodoCollectionQuery::class
     );
     $locator->addHandler(
-        new LatestTodoHandler($container["todoRepository"]),
+        new LatestTodoHandler($container['todoRepository']),
         LatestTodoQuery::class
     );
     $locator->addHandler(
-        new DeleteTodoHandler($container["todoRepository"]),
+        new DeleteTodoHandler($container['todoRepository']),
         DeleteTodoCommand::class
     );
     $locator->addHandler(
-        new UpdateTodoHandler($container["todoRepository"]),
+        new UpdateTodoHandler($container['todoRepository']),
         UpdateTodoCommand::class
     );
     $locator->addHandler(
-        new ReplaceTodoHandler($container["todoRepository"]),
+        new ReplaceTodoHandler($container['todoRepository']),
         ReplaceTodoCommand::class
     );
 
@@ -94,28 +94,28 @@ $container["commandBus"] = function ($container) {
     return new CommandBus([$commandHandlerMiddleware]);
 };
 
-$container["todoRepository"] = function ($container) {
+$container['todoRepository'] = function ($container) {
 
     return new ZendTodoRepository([
-        "driver" => "Mysqli",
-        "database" => getenv("DB_NAME"),
-        "username" => getenv("DB_USER"),
-        "password" => getenv("DB_PASSWORD"),
-        "hostname" => getenv("DB_HOST"),
-        "charset" => "utf8",
+        'driver'   => 'Mysqli',
+        'database' => getenv('DB_NAME'),
+        'username' => getenv('DB_USER'),
+        'password' => getenv('DB_PASSWORD'),
+        'hostname' => getenv('DB_HOST'),
+        'charset'  => 'utf8',
     ]);
 };
 
-$container["transformTodoService"] = function ($container) {
+$container['transformTodoService'] = function ($container) {
     return new TransformTodoService;
 };
 
-$container["transformTodoCollectionService"] = function ($container) {
+$container['transformTodoCollectionService'] = function ($container) {
     return new TransformTodoCollectionService;
 };
 
-$container["logger"] = function ($container) {
-    $logger = new Logger("slim");
+$container['logger'] = function ($container) {
+    $logger = new Logger('slim');
 
     $formatter = new LineFormatter(
         "[%datetime%] [%level_name%]: %message% %context%\n",
@@ -125,7 +125,7 @@ $container["logger"] = function ($container) {
     );
 
     /* Log to timestamped files */
-    $rotating = new RotatingFileHandler(__DIR__ . "/../logs/slim.log", 0, Logger::DEBUG);
+    $rotating = new RotatingFileHandler(__DIR__ . '/../logs/slim.log', 0, Logger::DEBUG);
     $rotating->setFormatter($formatter);
     $logger->pushHandler($rotating);
 

@@ -27,16 +27,24 @@ class Todo
     private $createdAt = null;
     private $updatedAt = null;
 
+    /**
+     * Todo constructor.
+     *
+     * @param TodoUid $uid
+     * @param string  $title
+     * @param int     $order
+     * @param null|bool    $completed
+     */
     public function __construct(
         TodoUid $uid,
         string $title,
-        int $order = 0,
-        bool $completed = false
+        int $order = null,
+        bool $completed = null
     ) {
         $this->uid = $uid;
         $this->title = $title;
-        $this->order = $order;
-        $this->completed = $completed;
+        $this->order = $order ?? 0;
+        $this->completed = $completed ?? false;
     }
 
     public function uid(): TodoUid

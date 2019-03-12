@@ -1,6 +1,5 @@
 <?php
 
-
 use Phinx\Seed\AbstractSeed;
 use Skeleton\Domain\TodoUid;
 
@@ -18,22 +17,21 @@ class TodoSeeder extends AbstractSeed
     {
         $data = [
             [
-                "uid" => (string) new TodoUid,
-                "title" => "Make coffee",
-                "created_at" => date("Y-m-d H:i:s"),
-                "updated_at" => date("Y-m-d H:i:s"),
+                'uid'        => (string)new TodoUid,
+                'title'      => 'Make coffee',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
             ],
             [
-                "uid" => (string) new TodoUid,
-                "title" => "Walk the spiderpig",
-                "created_at" => date("Y-m-d H:i:s"),
-                "updated_at" => date("Y-m-d H:i:s"),
+                'uid'        => (string)new TodoUid,
+                'title'      => 'Walk the spiderpig',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
             ],
         ];
 
-        $todos = $this->table("todos");
-        $todos
-            ->insert($data)
-            ->save();
+        $this->table('todos')
+             ->insert($data)
+             ->save();
     }
 }

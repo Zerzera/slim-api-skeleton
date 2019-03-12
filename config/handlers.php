@@ -18,14 +18,14 @@ use Skeleton\Infrastructure\Slim\Handler\NotFoundHandler;
 
 $container = $app->getContainer();
 
-$container["errorHandler"] = function ($container) {
-    return new ApiErrorHandler($container["logger"]);
+$container['errorHandler'] = function ($container) {
+    return new ApiErrorHandler($container['logger']);
 };
 
-$container["phpErrorHandler"] = function ($container) {
-    return $container["errorHandler"];
+$container['phpErrorHandler'] = function ($container) {
+    return $container['errorHandler'];
 };
 
-$container["notFoundHandler"] = function ($container) {
+$container['notFoundHandler'] = function ($container) {
     return new NotFoundHandler;
 };

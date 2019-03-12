@@ -18,15 +18,15 @@ namespace Skeleton\Domain;
 
 class Token
 {
-    public $decoded;
-
-    public function populate($decoded)
+    public $decoded = [
+        'scope' => []
+    ];
+    public function populate($decoded): void
     {
         $this->decoded = $decoded;
     }
-
-    public function hasScope(array $scope)
+    public function hasScope(array $scope): bool
     {
-        return !!count(array_intersect($scope, $this->decoded["scope"]));
+        return (bool)count(array_intersect($scope, $this->decoded['scope']));
     }
 }

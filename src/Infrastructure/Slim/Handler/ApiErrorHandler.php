@@ -21,8 +21,8 @@
 namespace Skeleton\Infrastructure\Slim\Handler;
 
 use Crell\ApiProblem\ApiProblem;
-use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
 use Slim\Handlers\AbstractError;
 use Throwable;
@@ -33,6 +33,7 @@ final class ApiErrorHandler extends AbstractError
 
     public function __construct(LoggerInterface $logger)
     {
+        parent::__construct(true);
         $this->logger = $logger;
     }
 
@@ -47,8 +48,8 @@ final class ApiErrorHandler extends AbstractError
         $body = $problem->asJson(true);
 
         return $response
-                ->withStatus($status)
-                ->withHeader("Content-type", "application/problem+json")
-                ->write($body);
+            ->withStatus($status)
+            ->withHeader("Content-type", "application/problem+json")
+            ->write($body);
     }
 }

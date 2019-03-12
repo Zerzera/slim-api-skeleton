@@ -25,8 +25,8 @@ final class NotAllowedHandler extends AbstractHandler
     public function __invoke(Request $request, Response $response, $allowed = null)
     {
         $problem = new ApiProblem(
-            "Method not allowed",
-            "http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html"
+            'Method not allowed',
+            'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html'
         );
         $problem->setStatus(405);
 
@@ -35,7 +35,7 @@ final class NotAllowedHandler extends AbstractHandler
                 $detail = "Request method must be {$allowed[0]}";
             } else {
                 $last = array_pop($allowed);
-                $first = implode(", ", $allowed);
+                $first = implode(', ', $allowed);
                 $detail = "Request method must be either {$first} or {$last}.";
             }
             $problem->setDetail($detail);
@@ -45,7 +45,7 @@ final class NotAllowedHandler extends AbstractHandler
 
         return $response
                 ->withStatus(405)
-                ->withHeader("Content-type", "application/problem+json")
+                ->withHeader('Content-type', 'application/problem+json')
                 ->write($body);
     }
 }

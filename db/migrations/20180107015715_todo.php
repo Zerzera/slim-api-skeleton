@@ -1,6 +1,5 @@
 <?php
 
-
 use Phinx\Migration\AbstractMigration;
 
 class Todo extends AbstractMigration
@@ -28,14 +27,13 @@ class Todo extends AbstractMigration
      */
     public function change()
     {
-        $todos = $this->table("todos");
-        $todos
-            ->addColumn("uid", "string", ["limit" => 16, "null" => false])
-            ->addColumn("title", "string", ["limit" => 255, "null" => false])
-            ->addColumn("completed", "integer", ["default" => 0])
-            ->addColumn("order", "integer", ["default" => 512])
-            ->addTimestamps()
-            ->addIndex(["uid"], ["unique" => true, "name" => "uid_index"]);
-        $todos->create();
+        $this->table('todos')
+             ->addColumn('uid', 'string', ['limit' => 16, 'null' => false])
+             ->addColumn('title', 'string', ['limit' => 255, 'null' => false])
+             ->addColumn('completed', 'integer', ['default' => 0])
+             ->addColumn('order', 'integer', ['default' => 512])
+             ->addTimestamps()
+             ->addIndex(['uid'], ['unique' => true, 'name' => 'uid_index'])
+             ->create();
     }
 }
