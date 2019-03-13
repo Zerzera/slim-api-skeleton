@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Slim API skeleton package
@@ -15,18 +16,40 @@
 
 use Gofabian\Negotiation\NegotiationMiddleware;
 use Micheh\Cache\CacheUtil;
+use Monolog\Logger;
+use Psr\Container\ContainerInterface;
 use Skeleton\Application\Response\UnauthorizedResponse;
 use Skeleton\Domain\Token;
+use Slim\Http\Request;
+use Slim\Http\Response;
 use Tuupola\Middleware\CorsMiddleware;
 use Tuupola\Middleware\HttpBasicAuthentication;
 use Tuupola\Middleware\JwtAuthentication;
 
 $container = $app->getContainer();
 
-$container['HttpBasicAuthentication'] = function ($container) {
+$app->add(function (Request $request, Response $response, callable $next) {
+    $uri = $request->getUri();
+    $path = $uri->getPath();
+    if ($path !== '/' && substr($path, -1) === '/') {
+        // permanently redirect paths with a trailing slash
+        // to their non-trailing counterpart
+        $uri = $uri->withPath(substr($path, 0, -1));
+
+        if ($request->getMethod() === 'GET') {
+            return $response->withRedirect((string)$uri, 301);
+        }
+
+        return $next($request->withUri($uri), $response);
+    }
+
+    return $next($request, $response);
+});
+
+$container[HttpBasicAuthentication::class] = function ($container) {
     return new HttpBasicAuthentication([
         'path'    => '/token',
-        'relaxed' => ['192.168.50.52', '127.0.0.1', 'localhost'],
+        'relaxed' => ['127.0.0.1', 'localhost'],
         'error'   => function ($response, $arguments) {
             return new UnauthorizedResponse($arguments['message'], 401);
         },
@@ -36,30 +59,30 @@ $container['HttpBasicAuthentication'] = function ($container) {
     ]);
 };
 
-$container['token'] = function ($container) {
+$container[Token::class] = function ($container) {
     return new Token;
 };
 
-$container['JwtAuthentication'] = function ($container) {
+$container[JwtAuthentication::class] = function (ContainerInterface $container) {
     return new JwtAuthentication([
         'path'      => '/',
-        'ignore'    => ['token', '/info'],
+        'ignore'    => ['/token', '/info'],
         'secret'    => getenv('JWT_SECRET'),
-        'logger'    => $container['logger'],
+        'logger'    => $container[Logger::class],
         'attribute' => false,
-        'relaxed'   => ['192.168.50.52', '127.0.0.1', 'localhost'],
+        'relaxed'   => ['127.0.0.1', 'localhost'],
         'error'     => function ($response, $arguments) {
             return new UnauthorizedResponse($arguments['message'], 401);
         },
         'before'    => function ($request, $arguments) use ($container) {
-            $container->token->populate($arguments['decoded']);
-        }
+            $container->get(Token::class)->populate($arguments['decoded']);
+        },
     ]);
 };
 
-$container['CorsMiddleware'] = function ($container) {
+$container[CorsMiddleware::class] = function ($container) {
     return new CorsMiddleware([
-        'logger'         => $container['logger'],
+        'logger'         => $container[Logger::class],
         'origin'         => ['*'],
         'methods'        => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
         'headers.allow'  => ['Authorization', 'If-Match', 'If-Unmodified-Since'],
@@ -72,17 +95,17 @@ $container['CorsMiddleware'] = function ($container) {
     ]);
 };
 
-$container['NegotiationMiddleware'] = function ($container) {
+$container[NegotiationMiddleware::class] = function ($container) {
     return new NegotiationMiddleware([
         'accept' => ['application/json'],
     ]);
 };
 
-$app->add('HttpBasicAuthentication');
-//$app->add('JwtAuthentication');
-$app->add('CorsMiddleware');
-$app->add('NegotiationMiddleware');
+$app->add(HttpBasicAuthentication::class);
+$app->add(JwtAuthentication::class);
+$app->add(CorsMiddleware::class);
+$app->add(NegotiationMiddleware::class);
 
-$container['cache'] = function ($container) {
+$container[CacheUtil::class] = function ($container) {
     return new CacheUtil;
 };

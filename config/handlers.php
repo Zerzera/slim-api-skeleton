@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Slim API skeleton package
@@ -13,19 +14,20 @@
  *
  */
 
+use Monolog\Logger;
 use Skeleton\Infrastructure\Slim\Handler\ApiErrorHandler;
 use Skeleton\Infrastructure\Slim\Handler\NotFoundHandler;
 
 $container = $app->getContainer();
 
-$container['errorHandler'] = function ($container) {
-    return new ApiErrorHandler($container['logger']);
+$container[ApiErrorHandler::class] = function ($container) {
+    return new ApiErrorHandler($container[Logger::class]);
 };
 
 $container['phpErrorHandler'] = function ($container) {
-    return $container['errorHandler'];
+    return $container[ApiErrorHandler::class];
 };
 
-$container['notFoundHandler'] = function ($container) {
+$container[NotFoundHandler::class] = function () {
     return new NotFoundHandler;
 };
